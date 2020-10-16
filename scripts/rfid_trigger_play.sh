@@ -63,6 +63,12 @@ fi
 # see following file for details:
 . $PATHDATA/inc.readArgsFromCommandLine.sh
 
+# The default $EXITCODE is 1, we expect a failure until it worked (we'll change this value after executing a command or play script)
+EXITCODE=1
+
+# We're changing this to 1, if a system command was executed. In conjunction with the $EXITCODE we can now distinguish between 4 situations (and 4 soundfiles)
+SYSTEMCOMMAND=0
+
 ##################################################################
 # Check if we got the card ID or the audio folder from the prompt.
 # Sloppy error check, because we assume the best.
@@ -76,202 +82,296 @@ if [ "$CARDID" ]; then
     echo "$CARDID" > $PATHDATA/../settings/Latest_RFID
     if [ "${DEBUG_rfid_trigger_play_sh}" == "TRUE" ]; then echo "Card ID '$CARDID' was used" >> $PATHDATA/../logs/debug.log; fi
 
-    mpg123 $PATHDATA/../sounds/beep.mp3  
- 
     # If the input is of 'special' use, don't treat it like a trigger to play audio.
     # Special uses are for example volume changes, skipping, muting sound.
 
     case $CARDID in
-	    $CMDSHUFFLE)
+  	    $CMDSHUFFLE)
             # toggles shuffle mode  (random on/off)
             $PATHDATA/playout_controls.sh -c=playershuffle
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDMAXVOL30)
             # limit volume to 30%
             $PATHDATA/playout_controls.sh -c=setmaxvolume -v=30
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDMAXVOL50)
             # limit volume to 50%
             $PATHDATA/playout_controls.sh -c=setmaxvolume -v=50
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDMAXVOL75)
             # limit volume to 75%
             $PATHDATA/playout_controls.sh -c=setmaxvolume -v=75
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDMAXVOL80)
             # limit volume to 80%
             $PATHDATA/playout_controls.sh -c=setmaxvolume -v=80
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDMAXVOL85)
             # limit volume to 85%
             $PATHDATA/playout_controls.sh -c=setmaxvolume -v=85
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDMAXVOL90)
             # limit volume to 90%
             $PATHDATA/playout_controls.sh -c=setmaxvolume -v=90
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDMAXVOL95)
             # limit volume to 95%
             $PATHDATA/playout_controls.sh -c=setmaxvolume -v=95
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDMAXVOL100)
             # limit volume to 100%
             $PATHDATA/playout_controls.sh -c=setmaxvolume -v=100
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDMUTE)
             # amixer sset 'PCM' 0%
             $PATHDATA/playout_controls.sh -c=mute
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDVOL30)
             # amixer sset 'PCM' 30%
             $PATHDATA/playout_controls.sh -c=setvolume -v=30
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDVOL50)
             # amixer sset 'PCM' 50%
             $PATHDATA/playout_controls.sh -c=setvolume -v=50
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDVOL75)
             # amixer sset 'PCM' 75%
             $PATHDATA/playout_controls.sh -c=setvolume -v=75
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDVOL80)
             # amixer sset 'PCM' 80%
             $PATHDATA/playout_controls.sh -c=setvolume -v=80
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDVOL85)
             # amixer sset 'PCM' 85%
             $PATHDATA/playout_controls.sh -c=setvolume -v=85
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDVOL90)
             # amixer sset 'PCM' 90%
             $PATHDATA/playout_controls.sh -c=setvolume -v=90
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDVOL95)
             # amixer sset 'PCM' 95%
             $PATHDATA/playout_controls.sh -c=setvolume -v=95
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDVOL100)
             # amixer sset 'PCM' 100%
             $PATHDATA/playout_controls.sh -c=setvolume -v=100
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDVOLUP)
             # increase volume by x% set in Audio_Volume_Change_Step
             $PATHDATA/playout_controls.sh -c=volumeup
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDVOLDOWN)
             # decrease volume by x% set in Audio_Volume_Change_Step
             $PATHDATA/playout_controls.sh -c=volumedown
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDSTOP)
             # kill all running audio players
             $PATHDATA/playout_controls.sh -c=playerstop
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDSHUTDOWN)
             # shutdown the RPi nicely
             # sudo halt
             $PATHDATA/playout_controls.sh -c=shutdown
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDREBOOT)
             # shutdown the RPi nicely
             # sudo reboot
             $PATHDATA/playout_controls.sh -c=reboot
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDNEXT)
             # play next track in playlist
             $PATHDATA/playout_controls.sh -c=playernext
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDPREV)
             # play previous track in playlist
             # echo "prev" | nc.openbsd -w 1 localhost 4212
             sudo $PATHDATA/playout_controls.sh -c=playerprev
             #/usr/bin/sudo /home/pi/RPi-Jukebox-RFID/scripts/playout_controls.sh -c=playerprev
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDREWIND)
             # play the first track in playlist
             sudo $PATHDATA/playout_controls.sh -c=playerrewind
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDSEEKFORW)
             # jump 15 seconds ahead
             $PATHDATA/playout_controls.sh -c=playerseek -v=+15
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDSEEKBACK)
             # jump 15 seconds back
             $PATHDATA/playout_controls.sh -c=playerseek -v=-15
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDPAUSE)
             # pause current track
             # echo "pause" | nc.openbsd -w 1 localhost 4212
             $PATHDATA/playout_controls.sh -c=playerpause
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDPLAY)
             # play / resume current track
             # echo "play" | nc.openbsd -w 1 localhost 4212
             $PATHDATA/playout_controls.sh -c=playerplay
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $STOPAFTER5)
             # stop player after -v minutes
             $PATHDATA/playout_controls.sh -c=playerstopafter -v=5
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $STOPAFTER15)
             # stop player after -v minutes
             $PATHDATA/playout_controls.sh -c=playerstopafter -v=15
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $STOPAFTER30)
             # stop player after -v minutes
             $PATHDATA/playout_controls.sh -c=playerstopafter -v=30
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $STOPAFTER60)
             # stop player after -v minutes
             $PATHDATA/playout_controls.sh -c=playerstopafter -v=60
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $SHUTDOWNAFTER5)
             # shutdown after -v minutes
             $PATHDATA/playout_controls.sh -c=shutdownafter -v=5
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $SHUTDOWNAFTER15)
             # shutdown after -v minutes
             $PATHDATA/playout_controls.sh -c=shutdownafter -v=15
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $SHUTDOWNAFTER30)
             # shutdown after -v minutes
             $PATHDATA/playout_controls.sh -c=shutdownafter -v=30
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $SHUTDOWNAFTER60)
             # shutdown after -v minutes
             $PATHDATA/playout_controls.sh -c=shutdownafter -v=60
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $ENABLEWIFI)
             $PATHDATA/playout_controls.sh -c=enablewifi
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $DISABLEWIFI)
             $PATHDATA/playout_controls.sh -c=disablewifi
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $TOGGLEWIFI)
             $PATHDATA/playout_controls.sh -c=togglewifi
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDPLAYCUSTOMPLS)
             $PATHDATA/playout_controls.sh -c=playlistaddplay -v="PhonieCustomPLS" -d="PhonieCustomPLS"
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $RECORDSTART600)
             #start recorder for -v seconds
             $PATHDATA/playout_controls.sh -c=recordstart -v=600
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $RECORDSTART60)
             #start recorder for -v seconds
             $PATHDATA/playout_controls.sh -c=recordstart -v=60
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $RECORDSTART10)
             #start recorder for -v seconds
             $PATHDATA/playout_controls.sh -c=recordstart -v=10
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $RECORDSTOP)
             $PATHDATA/playout_controls.sh -c=recordstop
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $RECORDPLAYBACKLATEST)
             $PATHDATA/playout_controls.sh -c=recordplaylatest
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         $CMDREADWIFIIP)
             $PATHDATA/playout_controls.sh -c=readwifiipoverspeaker
+            SYSTEMCOMMAND=1
+            EXITCODE=$?
             ;;
         *)
 
@@ -395,9 +495,11 @@ if [ ! -z "$FOLDER" -a ! -z ${FOLDER+x} -a -d "${AUDIOFOLDERSPATH}/${FOLDER}" ];
             then
                 if [ "${DEBUG_rfid_trigger_play_sh}" == "TRUE" ]; then echo "  MPD playing, pausing the player" >> $PATHDATA/../logs/debug.log; fi
                 sudo $PATHDATA/playout_controls.sh -c=playerpause &>/dev/null
+                EXITCODE=$?
             else
                 if [ "${DEBUG_rfid_trigger_play_sh}" == "TRUE" ]; then echo "MPD not playing, start playing" >> $PATHDATA/../logs/debug.log; fi
                 sudo $PATHDATA/playout_controls.sh -c=playerplay &>/dev/null
+                EXITCODE=$?
             fi
             if [ "${DEBUG_rfid_trigger_play_sh}" == "TRUE" ]; then echo "  Completed: toggle pause/play" >> $PATHDATA/../logs/debug.log; fi
         elif [ "$SECONDSWIPE" == "PLAY" -a $PLLENGTH -gt 0 ]
@@ -405,6 +507,7 @@ if [ ! -z "$FOLDER" -a ! -z ${FOLDER+x} -a -d "${AUDIOFOLDERSPATH}/${FOLDER}" ];
             # The following involves NOT playing the playlist, so we set:
             PLAYPLAYLIST=no
             sudo $PATHDATA/playout_controls.sh -c=playerplay &>/dev/null
+            EXITCODE=$?
             if [ "${DEBUG_rfid_trigger_play_sh}" == "TRUE" ]; then echo "  Completed: Resume playback" >> $PATHDATA/../logs/debug.log; fi
         elif [ "$SECONDSWIPE" == "NOAUDIOPLAY" ]
         then
@@ -465,6 +568,7 @@ if [ ! -z "$FOLDER" -a ! -z ${FOLDER+x} -a -d "${AUDIOFOLDERSPATH}/${FOLDER}" ];
         # because (see above) a folder can be played recursively (including subfolders) or flat (only containing files)
         # load new playlist and play
         $PATHDATA/playout_controls.sh -c=playlistaddplay -v="${PLAYLISTNAME}" -d="${FOLDER}"
+        EXITCODE=$?
         if [ "${DEBUG_rfid_trigger_play_sh}" == "TRUE" ]; then echo "  Command: $PATHDATA/playout_controls.sh -c=playlistaddplay -v=\"${PLAYLISTNAME}\" -d=\"${FOLDER}\"" >> $PATHDATA/../logs/debug.log; fi
         # save latest playlist not to file
         sudo echo ${PLAYLISTNAME} > $PATHDATA/../settings/Latest_Playlist_Played
@@ -479,7 +583,15 @@ if [ ! -z "$FOLDER" -a ! -z ${FOLDER+x} -a -d "${AUDIOFOLDERSPATH}/${FOLDER}" ];
 
         if [ "${DEBUG_rfid_trigger_play_sh}" == "TRUE" ]; then echo "  Command: $PATHDATA/playout_controls.sh -c=playernext" >> $PATHDATA/../logs/debug.log; fi
         $PATHDATA/playout_controls.sh -c=playernext
+        EXITCODE=$?
     fi
 else
     if [ "${DEBUG_rfid_trigger_play_sh}" == "TRUE" ]; then echo "Path not found $AUDIOFOLDERSPATH/$FOLDER" >> $PATHDATA/../logs/debug.log; fi
+fi
+
+if [ "$EXITCODE" == "0" ]
+then
+    mpg123 $PATHDATA/../sounds/beep.mp3  
+else
+    mpg123 $PATHDATA/../sounds/error.mp3  
 fi
