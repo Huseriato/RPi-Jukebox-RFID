@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# see https://github.com/MiczFlor/RPi-Jukebox-RFID for details
+# see https://github.com/Huseriato/RPi-Jukebox-RFID for details
 #
 # NOTE: Running automated install (without interaction):
 # Each install creates a file called PhonieboxInstall.conf
@@ -9,7 +9,7 @@
 # which means you don't need to run the interactive install:
 #
 # 1. download the install file from github
-#    https://github.com/MiczFlor/RPi-Jukebox-RFID/tree/develop/scripts/installscripts
+#    https://github.com/Huseriato/RPi-Jukebox-RFID/tree/develop/scripts/installscripts
 #    (note: currently only works for buster and newer OS)
 # 2. make the file executable: chmod +x
 # 3. place the PhonieboxInstall.conf in the folder /home/pi/

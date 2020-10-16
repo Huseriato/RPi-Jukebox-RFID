@@ -9,7 +9,7 @@
 # which means you don't need to run the interactive install:
 #
 # 1. download the install file from github
-#    https://github.com/MiczFlor/RPi-Jukebox-RFID/tree/develop/scripts/installscripts
+#    https://github.com/Huseriato/RPi-Jukebox-RFID/tree/develop/scripts/installscripts
 #    (note: currently only works for buster and newer OS)
 # 2. make the file executable: chmod +x
 # 3. place the PhonieboxInstall.conf in the folder /home/pi/
@@ -19,7 +19,7 @@
 # The absolute path to the folder which contains this script
 PATHDATA="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 GIT_BRANCH=${GIT_BRANCH:-master}
-GIT_URL=${GIT_URL:-https://github.com/MiczFlor/RPi-Jukebox-RFID.git}
+GIT_URL=${GIT_URL:-https://github.com/Huseriato/RPi-Jukebox-RFID.git}
 echo GIT_BRANCH $GIT_BRANCH
 echo GIT_URL $GIT_URL
 
