@@ -76,6 +76,8 @@ if [ "$CARDID" ]; then
     echo "$CARDID" > $PATHDATA/../settings/Latest_RFID
     if [ "${DEBUG_rfid_trigger_play_sh}" == "TRUE" ]; then echo "Card ID '$CARDID' was used" >> $PATHDATA/../logs/debug.log; fi
 
+    mpg123 $PATHDATA/../sounds/beep.mp3  
+ 
     # If the input is of 'special' use, don't treat it like a trigger to play audio.
     # Special uses are for example volume changes, skipping, muting sound.
 
