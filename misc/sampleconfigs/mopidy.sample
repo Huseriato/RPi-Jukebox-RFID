@@ -124,7 +124,7 @@ metadata_timeout = 1
 [local]
 enabled = true
 #library = json
-media_dir = /home/pi/RPi-Jukebox-RFID/shared/audiofolders
+media_dir = %media_dir%
 #scan_timeout = 1000
 #scan_flush_threshold = 100
 #scan_follow_symlinks = false

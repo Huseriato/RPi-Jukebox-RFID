@@ -926,10 +926,12 @@ install_main() {
         sudo sed -i 's/%spotify_password%/'"$SPOTIpass"'/' "${etc_mopidy_conf}"
         sudo sed -i 's/%spotify_client_id%/'"$SPOTIclientid"'/' "${etc_mopidy_conf}"
         sudo sed -i 's/%spotify_client_secret%/'"$SPOTIclientsecret"'/' "${etc_mopidy_conf}"
+        sudo sed -i 's=%media_dir%='"$DIRaudioFolders"'=' "${etc_mopidy_conf}"
         sed -i 's/%spotify_username%/'"$SPOTIuser"'/' "${mopidy_conf}"
         sed -i 's/%spotify_password%/'"$SPOTIpass"'/' "${mopidy_conf}"
         sed -i 's/%spotify_client_id%/'"$SPOTIclientid"'/' "${mopidy_conf}"
         sed -i 's/%spotify_client_secret%/'"$SPOTIclientsecret"'/' "${mopidy_conf}"
+        sed -i 's=%media_dir%='"$DIRaudioFolders"'=' "${mopidy_conf}"
     fi
 
     # GPIO-Control
@@ -1214,6 +1216,9 @@ finish_installation() {
 # Main #
 ########
 main() {
+    # Skip interactive Samba WINS config dialog
+    echo "samba-common samba-common/dhcp boolean false" | sudo debconf-set-selections
+    
     if [[ ${INTERACTIVE} == "true" ]]; then
         welcome
         #reset_install_config_file
@@ -1227,8 +1232,6 @@ main() {
     else
         echo "Non-interactive installation!"
         check_config_file
-        # Skip interactive Samba WINS config dialog
-        echo "samba-common samba-common/dhcp boolean false" | sudo debconf-set-selections
     fi
     install_main "${JUKEBOX_HOME_DIR}"
     wifi_settings "${JUKEBOX_HOME_DIR}/misc/sampleconfigs" "/etc/dhcpcd.conf" "/etc/wpa_supplicant/wpa_supplicant.conf"
