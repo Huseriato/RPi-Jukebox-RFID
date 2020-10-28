@@ -9,7 +9,7 @@ debug_file = /var/log/mopidy/mopidy-debug.log
 
 [local]
 enabled = true
-media_dir = %media_dir%
+media_dir = %DIRaudioFolders%
 excluded_file_extensions =
   .conf
   .jpg
