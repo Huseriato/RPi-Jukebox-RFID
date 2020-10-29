@@ -188,6 +188,17 @@ fi
 
 # SHUFFLE_STATUS=$(echo -e status\\nclose | nc -w 1 localhost 6600 | grep -o -P '(?<=random: ).*')
 
+if [ -f $PATHDATA/../events/$COMMAND.before.sh ];
+then
+  if [ "${DEBUG_playout_controls_sh}" == "TRUE" ]; then echo "   Executing ${COMMAND}.before.sh..." >> ${PATHDATA}/../logs/debug.log; fi
+
+  if [ $? != "0" ]; 
+  then
+    if [ "${DEBUG_playout_controls_sh}" == "TRUE" ]; then echo "   ${COMMAND}.before.sh returned exit code ${?}, ${COMMAND} cancelled." >> ${PATHDATA}/../logs/debug.log; fi
+    exit $?
+  fi;
+fi;
+ 
 case $COMMAND in
     shutdown)
         if [ "${DEBUG_playout_controls_sh}" == "TRUE" ]; then echo "   ${COMMAND}" >> ${PATHDATA}/../logs/debug.log; fi
