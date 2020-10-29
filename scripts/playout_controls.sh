@@ -1012,3 +1012,15 @@ case $COMMAND in
         if [ "${DEBUG_playout_controls_sh}" == "TRUE" ]; then echo "Unknown COMMAND ${COMMAND} VALUE ${VALUE}" >> ${PATHDATA}/../logs/debug.log; fi
         ;;
 esac
+
+if [ -f $PATHDATA/../events/$COMMAND.after.sh ];
+then
+  if [ "${DEBUG_playout_controls_sh}" == "TRUE" ]; then echo "   Executing ${COMMAND}.after.sh..." >> ${PATHDATA}/../logs/debug.log; fi
+
+  $PATHDATA/../events/$COMMAND.after.sh
+
+  if [ $? != "0" ]; 
+  then
+    if [ "${DEBUG_playout_controls_sh}" == "TRUE" ]; then echo "   ${COMMAND}.after.sh returned exit code ${?}." >> ${PATHDATA}/../logs/debug.log; fi
+  fi;
+fi;
