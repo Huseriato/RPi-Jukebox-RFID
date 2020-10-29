@@ -192,6 +192,8 @@ if [ -f $PATHDATA/../events/$COMMAND.before.sh ];
 then
   if [ "${DEBUG_playout_controls_sh}" == "TRUE" ]; then echo "   Executing ${COMMAND}.before.sh..." >> ${PATHDATA}/../logs/debug.log; fi
 
+  $PATHDATA/../events/$COMMAND.before.sh
+
   if [ $? != "0" ]; 
   then
     if [ "${DEBUG_playout_controls_sh}" == "TRUE" ]; then echo "   ${COMMAND}.before.sh returned exit code ${?}, ${COMMAND} cancelled." >> ${PATHDATA}/../logs/debug.log; fi
